@@ -36,15 +36,15 @@ def profile(request, username):
     post_list = Post.objects.filter(author=fullname)
     page_obj = paginate(request, post_list)
     if request.user.is_authenticated:
-        following = Follow.objects.filter(
+        follow = Follow.objects.filter(
             user=request.user, author=fullname
         ).exists()
     else:
-        following = False
+        follow = False
     context = {
         'page_obj': page_obj,
         'fullname': fullname,
-        'following': following
+        'follow': follow
     }
     return render(request, 'posts/profile.html', context)
 
@@ -77,7 +77,7 @@ def post_create(request):
 
 @login_required
 def post_edit(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
+    post = get_object_or_404(Post, id=post_id, author=request.user)
     if post_id and request.user != post.author:
         return redirect("posts:post_detail", post_id=post_id)
     form = PostForm(request.POST or None,
@@ -114,11 +114,10 @@ def follow_index(request):
 
 @login_required
 def profile_follow(request, username):
-    user = request.user
     author = User.objects.get(username=username)
-    is_follower = Follow.objects.filter(user=user, author=author)
-    if user != author and not is_follower.exists():
-        Follow.objects.create(user=user, author=author)
+    is_follower = Follow.objects.filter(user=request.user, author=author)
+    if request.user != author and not is_follower.exists():
+        Follow.objects.create(user=request.user, author=author)
     return redirect(reverse('posts:profile', args=[username]))
 
 

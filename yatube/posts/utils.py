@@ -1,8 +1,10 @@
 from django.core.paginator import Paginator
 
+POSTS_ON_PAGE = 10
+
 
 def paginate(request, obj):
-    paginator = Paginator(obj, 10)
+    paginator = Paginator(obj, POSTS_ON_PAGE)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return page_obj
