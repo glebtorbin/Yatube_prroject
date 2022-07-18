@@ -35,12 +35,8 @@ def profile(request, username):
     fullname = User.objects.get(username=username)
     post_list = Post.objects.filter(author=fullname)
     page_obj = paginate(request, post_list)
-    if request.user.is_authenticated:
-        follow = Follow.objects.filter(
-            user=request.user, author=fullname
-        ).exists()
-    else:
-        follow = False
+    follow = request.user.is_authenticated and Follow.objects.filter(
+        user=request.user, author=fullname).exists()
     context = {
         'page_obj': page_obj,
         'fullname': fullname,

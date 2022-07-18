@@ -13,7 +13,7 @@
       <div class="container py-5">        
         <h1>Все посты пользователя {{ fullname.username }} </h1>
         <h3>Всего постов: {{ fullname.posts.count }} </h3>
-        <h6>{% if following %}
+        <h6>{% if follow %}
           <a
             class="btn btn-lg btn-light"
             href="{% url 'posts:profile_unfollow' fullname.username %}" role="button"
